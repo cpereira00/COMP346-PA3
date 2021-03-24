@@ -1,4 +1,3 @@
-import common.BaseThread;
 
 /**
  * Class Philosopher.
@@ -50,6 +49,7 @@ public class Philosopher extends BaseThread
 		// ...
 	}
 
+
 	/**
 	 * The act of talking.
 	 * - Print the fact that a given phil (their TID) has started talking.
@@ -94,7 +94,7 @@ public class Philosopher extends BaseThread
 				// ...
 			}
 
-			yield();
+			Thread.yield(); //add thread
 		}
 	} // run()
 
