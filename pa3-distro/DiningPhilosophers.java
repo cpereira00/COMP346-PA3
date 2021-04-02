@@ -1,3 +1,4 @@
+import java.util.Scanner;
 /**
  * Class DiningPhilosophers
  * The main starter.
