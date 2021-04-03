@@ -24,9 +24,17 @@ public class Philosopher extends BaseThread
 	{
 		try
 		{
+			System.out.println("Philosopher "+getTID()+" has started eating.");
+
+			Thread.yield();
+
 			// ...
 			sleep((long)(Math.random() * TIME_TO_WASTE));
 			// ...
+
+			Thread.yield();
+
+			System.out.println("Philosopher "+getTID()+" has finished eating.");
 		}
 		catch(InterruptedException e)
 		{
@@ -46,7 +54,26 @@ public class Philosopher extends BaseThread
 	 */
 	public void think()
 	{
-		// ...
+		try
+		{
+			System.out.println("Philosopher "+getTID()+" has started thinking.");
+
+			Thread.yield();
+
+			// ...
+			sleep((long)(Math.random() * TIME_TO_WASTE));
+			// ...
+
+			Thread.yield();
+
+			System.out.println("Philosopher "+getTID()+" has finished thinking.");
+		}
+		catch(InterruptedException e)
+		{
+			System.err.println("Philosopher.think():");
+			DiningPhilosophers.reportException(e);
+			System.exit(1);
+		}
 	}
 
 
@@ -60,11 +87,19 @@ public class Philosopher extends BaseThread
 	 */
 	public void talk()
 	{
-		// ...
 
+		System.out.println("Philosopher "+getTID()+" has started talking.");
+
+		Thread.yield();
+
+		// ...
 		saySomething();
-
 		// ...
+
+		Thread.yield();
+
+		System.out.println("Philosopher "+getTID()+" has finished talking.");
+
 	}
 
 	/**
@@ -110,6 +145,7 @@ public class Philosopher extends BaseThread
 			"You know, true is false and false is true if you think of it",
 			"2 + 2 = 5 for extremely large values of 2...",
 			"If thee cannot speak, thee must be silent",
+			"Shoutout my bois Jiggs & Ceep",
 			"My number is " + getTID() + ""
 		};
 
