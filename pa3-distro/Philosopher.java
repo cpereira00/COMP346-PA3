@@ -1,4 +1,4 @@
-
+import java.util.Random;
 /**
  * Class Philosopher.
  * Outlines main subrutines of our virtual philosopher.
@@ -107,6 +107,8 @@ public class Philosopher extends BaseThread
 	 */
 	public void run()
 	{
+		Random rd = new Random();
+
 		for(int i = 0; i < DiningPhilosophers.DINING_STEPS; i++)
 		{
 			DiningPhilosophers.soMonitor.pickUp(getTID());
@@ -122,11 +124,16 @@ public class Philosopher extends BaseThread
 			 * A decision is made at random whether this particular
 			 * philosopher is about to say something terribly useful.
 			 */
-			if(true == false)
+
+			// create a randomized boolean and if bool == true then try to talk else dont
+			if(rd.nextBoolean())
 			{
-				// Some monitor ops down here...
+				// Some monitor ops down here... requestTalk()
+				DiningPhilosophers.soMonitor.requestTalk(getTID());
+
 				talk();
 				// ...
+				DiningPhilosophers.soMonitor.endTalk(getTID());
 			}
 
 			Thread.yield(); //add thread

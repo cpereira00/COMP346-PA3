@@ -88,11 +88,8 @@ public class DiningPhilosophers {
                 aoPhilosophers[j].start();
             }
 
-            System.out.println
-                    (
-                            iPhilosophers +
-                                    " philosopher(s) came in for a dinner."
-                    );
+            System.out.println(iPhilosophers +" philosopher(s) came in for a dinner.");
+
 
             // Main waits for all its children to die...
             // I mean, philosophers to finish their dinner.
