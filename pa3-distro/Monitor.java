@@ -33,7 +33,7 @@ public class Monitor
 		state = new Action[piNumberOfPhilosophers];
 		isChopstickAvailable = new Boolean[piNumberOfPhilosophers];
 
-		for(int i=0;i<piNumberOfPhilosophers;i++){
+		for(int i=0;i< piNumberOfPhilosophers;i++){
 			state[i] = Action.THINKING;
 		}
 	}
@@ -52,7 +52,7 @@ public class Monitor
 	public synchronized void pickUp(final int piTID)
 	{
 		// ...
-		state[piTID] = Action.HUNGRY;
+		state[piTID-1] = Action.HUNGRY;
 		//do a test to check if neighbors are eaiting if so wait
 		while(!isChopstickAvailable[piTID - 1] && !isChopstickAvailable[piTID % numberOfPhilosophers]){
 
@@ -62,6 +62,8 @@ public class Monitor
 				e.printStackTrace();
 			}
 
+		while(state[piTID-1] != Action.EATING){
+			//self[piTID].wait();
 		}
 
 		state[piTID] = Action.EATING;
@@ -80,6 +82,9 @@ public class Monitor
 		isChopstickAvailable[piTID % numberOfPhilosophers] = true;
 		state[piTID - 1] = Action.THINKING;
 
+		state[piTID-1] = Action.THINKING;
+
+		notifyAll();
 
 	}
 
@@ -102,7 +107,7 @@ public class Monitor
 		// while state[piTID] != Action.EATING (if so wait), check all states of every philosopher to see if == Action.TALKING, if true wait(),
 		// else state[piTID] = Action.TALKING;
 
-		while(state[piTID] == Action.EATING){
+		while(state[piTID-1] == Action.EATING){
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -120,7 +125,7 @@ public class Monitor
 			}
 		}
 
-		state[piTID] = Action.TALKING;
+		state[piTID-1] = Action.TALKING;
 
 
 	}
@@ -134,7 +139,7 @@ public class Monitor
 		System.out.println("Philosophers are free to talk.");
 
 
-		state[piTID] = Action.THINKING;
+		state[piTID-1] = Action.THINKING;
 		notifyAll();
 		// ...
 	}
