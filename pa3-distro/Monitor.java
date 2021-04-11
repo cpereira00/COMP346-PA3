@@ -82,16 +82,6 @@ public class Monitor
 	 */
 	public synchronized void requestTalk(final int piTID)
 	{
-//		while(state[piTID] != Action.EATING){
-//
-//			for(Action a: state){
-//				if(state[a] == Action.TALKING){
-//					Thread.wait();
-//
-//				}
-//				else
-//			}
-//		}
 		// while state[piTID] != Action.EATING (if so wait), check all states of every philosopher to see if == Action.TALKING, if true wait(),
 		// else state[piTID] = Action.TALKING;
 
