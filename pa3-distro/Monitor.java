@@ -60,19 +60,19 @@ public class Monitor
 	public synchronized void pickUp(final int piTID)
 	{
 		// ...
-		state[piTID-1] = Action.HUNGRY;
+		//state[piTID-1] = Action.HUNGRY;
 		//do a test to check if neighbors are eaiting if so wait
 		while(!isChopstickAvailable[piTID - 1] && !isChopstickAvailable[piTID % numberOfPhilosophers]){
-		/*
+
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		*/
+
 		}
 
-		state[piTID] = Action.EATING;
+		state[piTID - 1] = Action.EATING;
 		isChopstickAvailable[piTID - 1] = false;
 		isChopstickAvailable[piTID % numberOfPhilosophers] = false;
 	}
@@ -88,7 +88,7 @@ public class Monitor
 		isChopstickAvailable[piTID % numberOfPhilosophers] = true;
 		state[piTID - 1] = Action.THINKING;
 
-		//notifyAll();
+		notifyAll();
 
 	}
 
@@ -127,7 +127,7 @@ public class Monitor
 		}
 
 		//while your priority isnt high enough compared to other philos you wait, else you can talk
-		while(priorityTalkCheck[piTID-1] <= .75*(Collections.max(Arrays.asList(priorityTalkCheck)))) {
+		while(priorityTalkCheck[piTID-1] < .75*(Collections.max(Arrays.asList(priorityTalkCheck)))) {
 			try {
 				wait();
 				priorityTalkCheck[piTID-1]++;
