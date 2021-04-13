@@ -87,7 +87,7 @@ public class Monitor
 		
 		}
 
-		state[piTID] = Action.EATING;
+		state[piTID - 1] = Action.EATING;
 		isChopstickAvailable[piTID - 1] = false;
 		isChopstickAvailable[piTID % numberOfPhilosophers] = false;
 	}
