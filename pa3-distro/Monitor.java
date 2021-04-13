@@ -1,3 +1,5 @@
+import java.util.Arrays;
+import java.util.Collections;
 /**
  * Class Monitor
  * To synchronize dining philosophers.
@@ -11,10 +13,13 @@ public class Monitor
 	 * Data members
 	 * ------------
 	 */
-	public static int numberOfChopsticks, numberOfPhilosophers;
+	private static int numberOfChopsticks, numberOfPhilosophers;
 
-	public enum Action{HUNGRY, EATING, THINKING, TALKING};
-	public Action[] state;
+	private enum Action{HUNGRY, EATING, THINKING, TALKING};
+	private Action[] state;
+
+	private Integer[] priorityTalkCheck;
+
 
 	/**
 	 * Constructor
@@ -30,10 +35,12 @@ public class Monitor
 
 
 		//initialize all philosophers to thinking
-		state = new Action[piNumberOfPhilosophers];
+		state = new Action[numberOfPhilosophers];
+		priorityTalkCheck= new Integer[numberOfPhilosophers];
 
 		for(int i=0;i< piNumberOfPhilosophers;i++){
 			state[i] = Action.THINKING;
+			priorityTalkCheck[i] = 0;
 		}
 	}
 
@@ -93,18 +100,34 @@ public class Monitor
 			}
 
 		}
-		for(int i=0;i< state.length;i++){
+		/*
+		ISSUE at hand, doesnt prevent starvation since notifyall calls wakes up any thread
+		Solution: assign an int to each philosopher acting as a priority, and check amongst the highest before automatically allowing to talk,
+				  Everytime theres a wait() increment their counter, everytime there's a notifall() return to 0,
+		 */
+
+		for(int i=0;i < state.length;i++){
 			while(state[i] == Action.TALKING){
 				try {
 					wait();
+					priorityTalkCheck[piTID-1]++;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
 
-		state[piTID-1] = Action.TALKING;
+		//while your priority isnt high enough compared to other philos you wait, else you can talk
+		while(priorityTalkCheck[piTID-1] <= .75*(Collections.max(Arrays.asList(priorityTalkCheck)))) {
+			try {
+				wait();
+				priorityTalkCheck[piTID-1]++;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
+		}
+		state[piTID-1] = Action.TALKING;
 
 	}
 
@@ -118,6 +141,7 @@ public class Monitor
 
 
 		state[piTID-1] = Action.THINKING;
+		priorityTalkCheck[piTID-1] = 0;
 		notifyAll();
 		// ...
 	}
