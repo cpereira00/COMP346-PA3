@@ -1,3 +1,5 @@
+import java.util.Arrays;
+import java.util.Collections;
 /**
  * Class Monitor
  * To synchronize dining philosophers.
@@ -11,11 +13,14 @@ public class Monitor
 	 * Data members
 	 * ------------
 	 */
-	public static int numberOfChopsticks, numberOfPhilosophers;
+	private static int numberOfChopsticks, numberOfPhilosophers;
 
-	public enum Action{HUNGRY, EATING, THINKING, TALKING};
-	public Action[] state;
-	public Boolean[] isChopstickAvailable;
+	private enum Action{HUNGRY, EATING, THINKING, TALKING};
+	private Action[] state;
+
+	private Integer[] priorityTalkCheck;
+	private Boolean[] isChopstickAvailable;
+
 	/**
 	 * Constructor
 	 */
@@ -30,11 +35,14 @@ public class Monitor
 
 
 		//initialize all philosophers to thinking
-		state = new Action[piNumberOfPhilosophers];
-		isChopstickAvailable = new Boolean[piNumberOfPhilosophers];
+		state = new Action[numberOfPhilosophers];
+		priorityTalkCheck = new Integer[numberOfPhilosophers];
+		isChopstickAvailable = new Boolean[numberOfChopsticks];
 
 		for(int i=0;i< piNumberOfPhilosophers;i++){
 			state[i] = Action.THINKING;
+			isChopstickAvailable[i] = true;
+			priorityTalkCheck[i] = 0;
 		}
 	}
 
@@ -55,15 +63,13 @@ public class Monitor
 		state[piTID-1] = Action.HUNGRY;
 		//do a test to check if neighbors are eaiting if so wait
 		while(!isChopstickAvailable[piTID - 1] && !isChopstickAvailable[piTID % numberOfPhilosophers]){
-
+		/*
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
-		while(state[piTID-1] != Action.EATING){
-			//self[piTID].wait();
+		*/
 		}
 
 		state[piTID] = Action.EATING;
@@ -82,9 +88,7 @@ public class Monitor
 		isChopstickAvailable[piTID % numberOfPhilosophers] = true;
 		state[piTID - 1] = Action.THINKING;
 
-		state[piTID-1] = Action.THINKING;
-
-		notifyAll();
+		//notifyAll();
 
 	}
 
@@ -94,16 +98,6 @@ public class Monitor
 	 */
 	public synchronized void requestTalk(final int piTID)
 	{
-//		while(state[piTID] != Action.EATING){
-//
-//			for(Action a: state){
-//				if(state[a] == Action.TALKING){
-//					Thread.wait();
-//
-//				}
-//				else
-//			}
-//		}
 		// while state[piTID] != Action.EATING (if so wait), check all states of every philosopher to see if == Action.TALKING, if true wait(),
 		// else state[piTID] = Action.TALKING;
 
@@ -115,18 +109,34 @@ public class Monitor
 			}
 
 		}
-		for(int i=0;i< state.length;i++){
+		/*
+		ISSUE at hand, doesnt prevent starvation since notifyall calls wakes up any thread
+		Solution: assign an int to each philosopher acting as a priority, and check amongst the highest before automatically allowing to talk,
+				  Everytime theres a wait() increment their counter, everytime there's a notifall() return to 0,
+		 */
+
+		for(int i=0;i < state.length;i++){
 			while(state[i] == Action.TALKING){
 				try {
 					wait();
+					priorityTalkCheck[piTID-1]++;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
 
-		state[piTID-1] = Action.TALKING;
+		//while your priority isnt high enough compared to other philos you wait, else you can talk
+		while(priorityTalkCheck[piTID-1] <= .75*(Collections.max(Arrays.asList(priorityTalkCheck)))) {
+			try {
+				wait();
+				priorityTalkCheck[piTID-1]++;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
+		}
+		state[piTID-1] = Action.TALKING;
 
 	}
 
@@ -140,6 +150,7 @@ public class Monitor
 
 
 		state[piTID-1] = Action.THINKING;
+		priorityTalkCheck[piTID-1] = 0;
 		notifyAll();
 		// ...
 	}
