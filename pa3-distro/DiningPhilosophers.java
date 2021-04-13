@@ -61,28 +61,28 @@ public class DiningPhilosophers {
                 }
             }
 
-            System.out.println("How many philosophers are coming? ");
-            String inputNumber = kb.nextLine();
-
-
-            try {
-                int numberOfPhilosophers = Integer.parseInt(inputNumber);
-
-
-                if (numberOfPhilosophers >= 0) {
-                    iPhilosophers = numberOfPhilosophers;
-
-                } else if (numberOfPhilosophers < 0) {
-
-                    System.out.println("\"" + numberOfPhilosophers + "\"" + " Is not a positive decimal integer,\n Usage: java DiningPhilosophers[" + iPhilosophers + "]");
-
-                }
-            } catch (Exception e) {
-                iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
-                System.out.println("Incorrect arguments were passed, using default: " + iPhilosophers);
-
-            }
-
+//            System.out.println("How many philosophers are coming? ");
+//            String inputNumber = kb.nextLine();
+//
+//
+//            try {
+//                int numberOfPhilosophers = Integer.parseInt(inputNumber);
+//
+//
+//                if (numberOfPhilosophers >= 0) {
+//                    iPhilosophers = numberOfPhilosophers;
+//
+//                } else if (numberOfPhilosophers < 0) {
+//
+//                    System.out.println("\"" + numberOfPhilosophers + "\"" + " Is not a positive decimal integer,\n Usage: java DiningPhilosophers[" + iPhilosophers + "]");
+//
+//                }
+//            } catch (Exception e) {
+//                iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
+//                System.out.println("Incorrect arguments were passed, using default: " + iPhilosophers);
+//
+//            }
+//
 
             // Make the monitor aware of how many philosophers there are
             soMonitor = new Monitor(iPhilosophers);

@@ -19,6 +19,7 @@ public class Monitor
 	private Action[] state;
 
 	private Integer[] priorityTalkCheck;
+	private int[] priorityEatCheck;
 	private Boolean[] isChopstickAvailable;
 
 	/**
@@ -38,11 +39,13 @@ public class Monitor
 		state = new Action[numberOfPhilosophers];
 		priorityTalkCheck = new Integer[numberOfPhilosophers];
 		isChopstickAvailable = new Boolean[numberOfChopsticks];
+		priorityEatCheck = new int[numberOfPhilosophers];
 
 		for(int i=0;i< piNumberOfPhilosophers;i++){
 			state[i] = Action.THINKING;
 			isChopstickAvailable[i] = true;
 			priorityTalkCheck[i] = 0;
+			priorityEatCheck[i] = 0;
 		}
 	}
 
@@ -63,16 +66,31 @@ public class Monitor
 		state[piTID-1] = Action.HUNGRY;
 		//do a test to check if neighbors are eaiting if so wait
 		while(!isChopstickAvailable[piTID - 1] && !isChopstickAvailable[piTID % numberOfPhilosophers]){
-		/*
+			
 			try {
 				wait();
+				priorityEatCheck[piTID - 1] ++;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		*/
+		
 		}
 
-		state[piTID] = Action.EATING;
+		int leftIndex = piTID - 2;
+		if (leftIndex < 0) leftIndex = numberOfPhilosophers - 1;
+
+		while(priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[leftIndex] || priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID % numberOfPhilosophers]){
+			
+			try {
+				wait();
+				priorityEatCheck[piTID - 1] ++;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		
+		}
+
+		state[piTID - 1] = Action.EATING;
 		isChopstickAvailable[piTID - 1] = false;
 		isChopstickAvailable[piTID % numberOfPhilosophers] = false;
 	}
@@ -87,8 +105,9 @@ public class Monitor
 		isChopstickAvailable[piTID - 1] = true;
 		isChopstickAvailable[piTID % numberOfPhilosophers] = true;
 		state[piTID - 1] = Action.THINKING;
+		priorityEatCheck[piTID - 1] = 0;
 
-		//notifyAll();
+		notifyAll();
 
 	}
 
@@ -127,7 +146,7 @@ public class Monitor
 		}
 
 		//while your priority isnt high enough compared to other philos you wait, else you can talk
-		while(priorityTalkCheck[piTID-1] <= .75*(Collections.max(Arrays.asList(priorityTalkCheck)))) {
+		while(priorityTalkCheck[piTID-1] < .75*(Collections.max(Arrays.asList(priorityTalkCheck)))) {
 			try {
 				wait();
 				priorityTalkCheck[piTID-1]++;
