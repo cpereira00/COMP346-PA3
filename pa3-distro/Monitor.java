@@ -63,28 +63,31 @@ public class Monitor
 	public synchronized void pickUp(final int piTID)
 	{
 		// ...
-		//state[piTID-1] = Action.HUNGRY;
+		state[piTID-1] = Action.HUNGRY;
 		//do a test to check if neighbors are eaiting if so wait
 		while(!isChopstickAvailable[piTID - 1] && !isChopstickAvailable[piTID % numberOfPhilosophers]){
-
+			
 			try {
 				wait();
 				priorityEatCheck[piTID - 1] ++;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
+		
 		}
 
-		while(priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID - 2] || priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID % numberOfPhilosophers]){
+		int leftIndex = piTID - 2;
+		if (leftIndex < 0) leftIndex = numberOfPhilosophers - 1;
 
+		while(priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[leftIndex] || priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID % numberOfPhilosophers]){
+			
 			try {
 				wait();
 				priorityEatCheck[piTID - 1] ++;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
+		
 		}
 
 		state[piTID - 1] = Action.EATING;
