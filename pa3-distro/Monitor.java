@@ -19,6 +19,7 @@ public class Monitor
 	private Action[] state;
 
 	private Integer[] priorityTalkCheck;
+	private int[] priorityEatCheck;
 	private Boolean[] isChopstickAvailable;
 
 	/**
@@ -38,11 +39,13 @@ public class Monitor
 		state = new Action[numberOfPhilosophers];
 		priorityTalkCheck = new Integer[numberOfPhilosophers];
 		isChopstickAvailable = new Boolean[numberOfChopsticks];
+		priorityEatCheck = new int[numberOfPhilosophers];
 
 		for(int i=0;i< piNumberOfPhilosophers;i++){
 			state[i] = Action.THINKING;
 			isChopstickAvailable[i] = true;
 			priorityTalkCheck[i] = 0;
+			priorityEatCheck[i] = 0;
 		}
 	}
 
@@ -63,13 +66,25 @@ public class Monitor
 		state[piTID-1] = Action.HUNGRY;
 		//do a test to check if neighbors are eaiting if so wait
 		while(!isChopstickAvailable[piTID - 1] && !isChopstickAvailable[piTID % numberOfPhilosophers]){
-		/*
+			
 			try {
 				wait();
+				priorityEatCheck[piTID - 1] ++;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		*/
+		
+		}
+
+		while(priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID - 2] || priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID % numberOfPhilosophers]){
+			
+			try {
+				wait();
+				priorityEatCheck[piTID - 1] ++;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		
 		}
 
 		state[piTID] = Action.EATING;
@@ -87,8 +102,9 @@ public class Monitor
 		isChopstickAvailable[piTID - 1] = true;
 		isChopstickAvailable[piTID % numberOfPhilosophers] = true;
 		state[piTID - 1] = Action.THINKING;
+		priorityEatCheck[piTID] = 0;
 
-		//notifyAll();
+		notifyAll();
 
 	}
 
