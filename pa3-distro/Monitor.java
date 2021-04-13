@@ -76,7 +76,10 @@ public class Monitor
 		
 		}
 
-		while(priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID - 2] || priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID % numberOfPhilosophers]){
+		int leftIndex = piTID - 2;
+		if (leftIndex < 0) leftIndex = numberOfPhilosophers - 1;
+
+		while(priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[leftIndex] || priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID % numberOfPhilosophers]){
 			
 			try {
 				wait();
