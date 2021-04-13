@@ -22,6 +22,8 @@ public class Monitor
 	private int[] priorityEatCheck;
 	private Boolean[] isChopstickAvailable;
 
+	private final double BUFFER = .75;
+
 	/**
 	 * Constructor
 	 */
@@ -63,7 +65,6 @@ public class Monitor
 	public synchronized void pickUp(final int piTID)
 	{
 		// ...
-		state[piTID-1] = Action.HUNGRY;
 		//do a test to check if neighbors are eaiting if so wait
 		while(!isChopstickAvailable[piTID - 1] && !isChopstickAvailable[piTID % numberOfPhilosophers]){
 			
@@ -79,7 +80,7 @@ public class Monitor
 		int leftIndex = piTID - 2;
 		if (leftIndex < 0) leftIndex = numberOfPhilosophers - 1;
 
-		while(priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[leftIndex] || priorityEatCheck[piTID - 1] < .75 * priorityEatCheck[piTID % numberOfPhilosophers]){
+		while(priorityEatCheck[piTID - 1] < BUFFER * priorityEatCheck[leftIndex] || priorityEatCheck[piTID - 1] < BUFFER * priorityEatCheck[piTID % numberOfPhilosophers]){
 			
 			try {
 				wait();
@@ -146,7 +147,7 @@ public class Monitor
 		}
 
 		//while your priority isnt high enough compared to other philos you wait, else you can talk
-		while(priorityTalkCheck[piTID-1] < .75*(Collections.max(Arrays.asList(priorityTalkCheck)))) {
+		while(priorityTalkCheck[piTID-1] < BUFFER*(Collections.max(Arrays.asList(priorityTalkCheck)))) {
 			try {
 				wait();
 				priorityTalkCheck[piTID-1]++;
