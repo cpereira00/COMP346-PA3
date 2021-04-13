@@ -105,7 +105,7 @@ public class Monitor
 		isChopstickAvailable[piTID - 1] = true;
 		isChopstickAvailable[piTID % numberOfPhilosophers] = true;
 		state[piTID - 1] = Action.THINKING;
-		priorityEatCheck[piTID] = 0;
+		priorityEatCheck[piTID - 1] = 0;
 
 		notifyAll();
 
