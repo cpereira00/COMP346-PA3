@@ -56,6 +56,10 @@ public class DiningPhilosophers {
                 try {
                     iPhilosophers = Integer.parseInt(argv[0]);
 
+                    if(iPhilosophers == 1){
+                        iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
+                    }
+
                 } catch (Exception e){
                     System.out.println("Incorrect arguments were passed, using default: " + iPhilosophers);
                 }
